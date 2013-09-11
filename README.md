@@ -1,7 +1,9 @@
 Sight
 =====
 
-JFreeChart Utility Classes
+JFreeChart Utility Classes and more!
+Work in progress...
+
 ## Build Status
 [![Build Status](https://travis-ci.org/mashti/sight.png?branch=master)](https://travis-ci.org/mashti/sight)
 
