@@ -14,30 +14,53 @@
  * You should have received a copy of the GNU General Public License
  * along with sight.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.mashti.sight;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Stroke;
 import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
+
+import static java.awt.Color.BLACK;
 
 public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
 
-    public static final Font LARGE_FONT = new Font("CMU Bright", Font.PLAIN, 20);
+    public static final Font LARGE_FONT = new Font("Myriad Pro", Font.PLAIN, 25);
     private static final Font SMALL_FONT = LARGE_FONT.deriveFont(12f);
-    private static final Font SMALLEST_FONT = LARGE_FONT.deriveFont(10f);
     private static final Font MEDIUM_FONT = SMALL_FONT.deriveFont(14f);
+    private static final String[] GOOGLE_CHART_COLOR_SEQUENCE = {"0x3366cc", "0xdc3912", "0xff9900", "0x109618", "0x990099", "0x0099c6", "0xdd4477", "0x66aa00", "0xb82e2e", "0x316395", "0x994499", "0x22aa99", "0xaaaa11", "0x6633cc", "0xe67300", "0x8b0707", "0x651067", "0x329262", "0x5574a6", "0x3b3eac", "0xb77322", "0x16d620", "0xb91383", "0xf4359e", "0x9c5935", "0xa9c413", "0x2a778d", "0x668d1c", "0xbea413", "0x0c5922", "0x743411"};
+    private static final Paint[] PAINT_SEQUENCE = new Paint[GOOGLE_CHART_COLOR_SEQUENCE.length];
+
+    static {
+        int i = 0;
+        for (String p : GOOGLE_CHART_COLOR_SEQUENCE) {
+            PAINT_SEQUENCE[i] = Color.decode(p);
+            i++;
+        }
+    }
 
     public PlainChartTheme() {
 
         super("plain");
+        setDrawingSupplier(new DefaultDrawingSupplier(PAINT_SEQUENCE, new Paint[] {
+                BLACK
+        }, new Stroke[] {new BasicStroke(2.0f)}, new Stroke[] {new BasicStroke(1f)}, DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
     }
 
     @Override
@@ -65,31 +88,49 @@ public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
             final CategoryPlot category_plot = chart.getCategoryPlot();
             decorateCategoryPlot(category_plot);
         }
+
     }
 
     private void decorateCategoryPlot(final CategoryPlot category_plot) {
 
-        throw new UnsupportedOperationException("category plot decoration is not supported by this theme yet!");
+        final CategoryAxis domain_axis = category_plot.getDomainAxis();
+        final ValueAxis range_axis = category_plot.getRangeAxis();
+        decorateAxis(domain_axis);
+        decorateAxis(range_axis);
+
+        category_plot.setDomainGridlinesVisible(false);
+        category_plot.setRangeGridlinesVisible(false);
+
+        final CategoryItemRenderer renderer = category_plot.getRenderer();
+        renderer.setBaseOutlinePaint(BLACK);
+        renderer.setBaseItemLabelPaint(BLACK);
+        renderer.setBasePaint(BLACK);
 
     }
 
     private void decorateXYPlot(final XYPlot xy_plot) {
 
         final ValueAxis domain_axis = xy_plot.getDomainAxis();
-        decorateValueAxis(domain_axis);
         final ValueAxis range_axis = xy_plot.getRangeAxis();
-        decorateValueAxis(range_axis);
+        decorateAxis(domain_axis);
+        decorateAxis(range_axis);
+
         xy_plot.setDomainGridlinesVisible(false);
         xy_plot.setRangeGridlinesVisible(false);
+
+        final XYItemRenderer renderer = xy_plot.getRenderer();
+        renderer.setBaseOutlinePaint(BLACK);
+        renderer.setBaseItemLabelPaint(BLACK);
+        renderer.setBasePaint(BLACK);
     }
 
-    private void decorateValueAxis(final ValueAxis axis) {
+    private void decorateAxis(final Axis axis) {
 
-        axis.setAxisLinePaint(Color.BLACK);
-        //        axis.setAxisLineStroke(new BasicStroke(2f));
+        axis.setAxisLinePaint(BLACK);
         axis.setTickLabelFont(SMALL_FONT);
-        axis.setTickLabelPaint(Color.BLACK);
-        axis.setTickMarkPaint(Color.BLACK);
+        axis.setTickLabelPaint(BLACK);
+        axis.setTickMarkPaint(BLACK);
+        axis.setLabelPaint(BLACK);
         axis.setLabelFont(MEDIUM_FONT);
     }
 
@@ -101,7 +142,10 @@ public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
 
     private void decorateLegend(final LegendTitle legend) {
 
-        legend.setItemFont(SMALLEST_FONT);
-        legend.setBorder(0, 0, 0, 0);
+        if (legend != null) {
+            legend.setItemFont(SMALL_FONT);
+            legend.setBorder(0, 0, 0, 0);
+            legend.setItemPaint(BLACK);
+        }
     }
 }
