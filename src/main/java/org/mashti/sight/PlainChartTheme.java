@@ -27,6 +27,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
@@ -102,7 +104,10 @@ public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
         final CategoryAxis domain_axis = category_plot.getDomainAxis();
         final ValueAxis range_axis = category_plot.getRangeAxis();
         decorateAxis(domain_axis);
+
         decorateAxis(range_axis);
+        setTickUnit(range_axis);
+
         domain_axis.setMaximumCategoryLabelLines(3);
 
         category_plot.setDomainGridlinesVisible(false);
@@ -127,6 +132,9 @@ public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
         decorateAxis(domain_axis);
         decorateAxis(range_axis);
 
+        setTickUnit(domain_axis);
+        setTickUnit(range_axis);
+
         xy_plot.setDomainGridlinesVisible(false);
         xy_plot.setRangeGridlinesVisible(false);
 
@@ -150,6 +158,14 @@ public class PlainChartTheme extends StandardChartTheme implements ChartTheme {
         axis.setTickMarkPaint(BLACK);
         axis.setLabelPaint(BLACK);
         axis.setLabelFont(MEDIUM_FONT);
+    }
+
+    private void setTickUnit(ValueAxis axis) {
+
+        final TickUnits units = new TickUnits();
+        final long unit = Math.round(Math.round(axis.getUpperBound()) * 0.1);
+        units.add(new NumberTickUnit(unit < 10 ? unit < 5 ? unit < 1 ? 0.5 : 1 : unit - unit % 5 : unit - unit % 10));
+        axis.setStandardTickUnits(units);
     }
 
     private void decoratePlot(final Plot plot) {
